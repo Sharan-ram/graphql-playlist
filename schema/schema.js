@@ -11,9 +11,9 @@ const {
 
 // Dummy books data
 const books = [
-  { id: "1", name: "FHI", genre: "Self Help" },
-  { id: "2", name: "GBR", genre: "Business and Relationship" },
-  { id: "3", name: "VT", genre: "Philosophy" },
+  { id: "1", name: "FHI", genre: "Self Help", authorId: "1" },
+  { id: "2", name: "GBR", genre: "Business and Relationship", authorId: "2" },
+  { id: "3", name: "VT", genre: "Philosophy", authorId: "3" },
 ];
 
 // Dummy authors data
@@ -29,6 +29,12 @@ const BookType = new GraphQLObjectType({
     id: { type: GraphQLID },
     name: { type: GraphQLString },
     genre: { type: GraphQLString },
+    author: {
+      type: AuthorType,
+      resolve(parent, args) {
+        return _.find(authors, { id: parent.authorId });
+      },
+    },
   }),
 });
 
