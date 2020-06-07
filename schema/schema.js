@@ -12,20 +12,6 @@ const {
   GraphQLSchema,
 } = graphql;
 
-// Dummy books data
-const books = [
-  { id: "1", name: "FHI", genre: "Self Help", authorId: "1" },
-  { id: "2", name: "GBR", genre: "Business and Relationship", authorId: "2" },
-  { id: "3", name: "VT", genre: "Philosophy", authorId: "3" },
-];
-
-// Dummy authors data
-const authors = [
-  { id: "1", name: "A Partha", age: 92 },
-  { id: "2", name: "Josh GoldSmith", age: 55 },
-  { id: "3", name: "John Sanders", age: 67 },
-];
-
 const BookType = new GraphQLObjectType({
   name: "Book",
   fields: () => ({
@@ -35,7 +21,7 @@ const BookType = new GraphQLObjectType({
     author: {
       type: AuthorType,
       resolve(parent, args) {
-        return _.find(authors, { id: parent.authorId });
+        return Author.findById(parent.authorId);
       },
     },
   }),
@@ -50,7 +36,7 @@ const AuthorType = new GraphQLObjectType({
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args) {
-        return _.filter(books, { authorId: parent.id });
+        return Book.find({ authorId: parent.id });
       },
     },
   }),
@@ -64,26 +50,27 @@ const RootQuery = new GraphQLObjectType({
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
         // code to get data from the db or other source
-        return _.find(books, { id: args.id });
+        const book = Book.findById(args.id);
+        return book;
       },
     },
     author: {
       type: AuthorType,
       args: { id: { type: GraphQLID } },
       resolve(parent, args) {
-        return _.find(authors, { id: args.id });
+        return Author.findById(args.id);
       },
     },
     books: {
       type: new GraphQLList(BookType),
       resolve(parent, args) {
-        return books;
+        return Book.find({});
       },
     },
     authors: {
       type: new GraphQLList(AuthorType),
       resolve(parent, args) {
-        return authors;
+        return Author.find({});
       },
     },
   },
